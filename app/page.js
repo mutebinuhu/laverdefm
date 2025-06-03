@@ -26,12 +26,20 @@ export default function HomePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission (page reload)
-    setIsLoading(true);
+  try {
+      setIsLoading(true);
 
     // In a real application, you would send formData to your backend here
     // Example: const response = await fetch('/api/book-service', { method: 'POST', body: JSON.stringify(formData) });
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('Submitting form:', formData);
+    const response = await fetch('https://backend.laverde.ae/laverdefmemail.php', { method: 'POST', body: JSON.stringify(formData) });
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Error submitting form:', data);
+      setIsLoading(false);
+      return;
+    }
 
     console.log('Form submitted:', formData);
     setIsSubmitted(true);
@@ -50,6 +58,13 @@ export default function HomePage() {
         date: ''
       });
     }, 3000);
+  } catch (error) {
+    console.log('Error submitting form:', error);
+    setIsLoading(false);
+    // Optionally, you can show an error message to the user
+    alert('There was an error submitting your request. Please try again later.');
+    setIsSubmitted(false);
+  }
   };
 
   const handleChange = (e) => {
